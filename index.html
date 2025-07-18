@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -453,6 +453,24 @@
             // ในการใช้งานจริง จะส่งไปยัง server
             console.log('Sending to API:', data);
             addLog(`📡 ส่งข้อมูลไปยัง API เรียบร้อย`);
+            
+            // จำลองการส่งไปยัง server จริง
+            /*
+            fetch('/api/send-to-roblox', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                addLog(`✅ ส่งข้อมูลไปยัง server สำเร็จ`);
+            })
+            .catch(error => {
+                addLog(`❌ เกิดข้อผิดพลาด: ${error.message}`);
+            });
+            */
         }
 
         // API สำหรับให้ Roblox มารับข้อมูล
