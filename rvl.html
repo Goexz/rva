@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roblox Game Controller</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .control-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .control-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .control-section:hover {
+            transform: translateY(-5px);
+        }
+
+        .control-section h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .input-group input,
+        .input-group select,
+        .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus,
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #00b894, #00a085);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #fdcb6e, #e17055);
+        }
+
+        .quick-commands {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .status-panel {
+            background: #1a1a1a;
+            color: #00ff00;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 30px;
+            font-family: monospace;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .status-panel h3 {
+            color: #fff;
+            margin-bottom: 15px;
+        }
+
+        .log-entry {
+            margin-bottom: 10px;
+            padding: 8px;
+            background: rgba(0, 255, 0, 0.1);
+            border-left: 3px solid #00ff00;
+            border-radius: 5px;
+        }
+
+        .log-time {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .player-list {
+            background: #fff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            border: 2px solid #e9ecef;
+        }
+
+        .player-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.3s ease;
+        }
+
+        .player-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .player-item:last-child {
+            border-bottom: none;
+        }
+
+        .online-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #28a745;
+            margin-right: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .clear-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .clear-btn:hover {
+            background: #c82333;
+        }
+
+        @media (max-width: 768px) {
+            .control-panel {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-commands {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 Roblox Game Controller</h1>
+            <p>ควบคุมเกม Roblox ผ่านเว็บไซต์</p>
+        </div>
+
+        <div class="control-panel">
+            <!-- Player Commands -->
+            <div class="control-section">
+                <h3>👤 คำสั่งผู้เล่น</h3>
+                
+                <div class="input-group">
+                    <label for="playerName">ชื่อผู้เล่น:</label>
+                    <input type="text" id="playerName" placeholder="กรอกชื่อผู้เล่น" value="TestPlayer">
+                </div>
+
+                <div class="input-group">
+                    <label for="command">คำสั่ง:</label>
+                    <select id="command">
+                        <option value="teleport">🚀 Teleport</option>
+                        <option value="heal">❤️ Heal</option>
+                        <option value="speed">💨 Speed Boost</option>
+                        <option value="jump">🦘 Jump Boost</option>
+                        <option value="custom">⚙️ Custom Command</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="commandValue">ค่าพารามิเตอร์:</label>
+                    <input type="number" id="commandValue" placeholder="ค่าที่ต้องการ (เช่น 50)" value="50">
+                </div>
+
+                <button class="btn" onclick="sendCommand()">ส่งคำสั่ง</button>
+
+                <div class="quick-commands">
+                    <button class="btn btn-success" onclick="quickCommand('heal')">❤️ Heal</button>
+                    <button class="btn btn-warning" onclick="quickCommand('teleport')">🚀 TP</button>
+                    <button class="btn btn-danger" onclick="quickCommand('speed')">💨 Speed</button>
+                </div>
+            </div>
+
+            <!-- Rewards System -->
+            <div class="control-section">
+                <h3>🎁 ระบบรางวัล</h3>
+                
+                <div class="input-group">
+                    <label for="coins">Coins:</label>
+                    <input type="number" id="coins" placeholder="จำนวน Coins" value="100">
+                </div>
+
+                <div class="input-group">
+                    <label for="level">Level:</label>
+                    <input type="number" id="level" placeholder="Level ที่ต้องการ" value="1">
+                </div>
+
+                <div class="input-group">
+                    <label for="items">Items (คั่นด้วยเครื่องหมายจุลภาค):</label>
+                    <input type="text" id="items" placeholder="sword,shield,potion" value="sword,shield,potion">
+                </div>
+
+                <button class="btn btn-success" onclick="sendRewards()">ส่งรางวัล</button>
+            </div>
+
+            <!-- Custom Data -->
+            <div class="control-section">
+                <h3>⚙️ ข้อมูลกำหนดเอง</h3>
+                
+                <div class="input-group">
+                    <label for="customData">JSON Data:</label>
+                    <textarea id="customData" rows="5" placeholder='{"custom": "data", "value": 123}'></textarea>
+                </div>
+
+                <button class="btn" onclick="sendCustomData()">ส่งข้อมูลกำหนดเอง</button>
+            </div>
+        </div>
+
+        <!-- Active Players -->
+        <div class="control-section">
+            <h3>👥 ผู้เล่นที่เชื่อมต่อ</h3>
+            <div class="player-list" id="playerList">
+                <div class="player-item">
+                    <span><span class="online-indicator"></span>TestPlayer</span>
+                    <span>Online</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Panel -->
+        <div class="status-panel">
+            <h3>📊 Status Log</h3>
+            <button class="clear-btn" onclick="clearLog()">Clear Log</button>
+            <div id="statusLog"></div>
+        </div>
+    </div>
+
+    <script>
+        // เก็บข้อมูลสำหรับส่งไปยัง Roblox
+        let gameData = {};
+
+        // เพิ่มข้อความใน log
+        function addLog(message, type = 'info') {
+            const log = document.getElementById('statusLog');
+            const time = new Date().toLocaleString('th-TH');
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = `
+                <div class="log-time">[${time}]</div>
+                <div>${message}</div>
+            `;
+            log.appendChild(logEntry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        // ล้าง log
+        function clearLog() {
+            document.getElementById('statusLog').innerHTML = '';
+        }
+
+        // ส่งคำสั่งไปยัง Roblox
+        function sendCommand() {
+            const playerName = document.getElementById('playerName').value;
+            const command = document.getElementById('command').value;
+            const value = parseInt(document.getElementById('commandValue').value) || 0;
+
+            if (!playerName) {
+                alert('กรุณากรอกชื่อผู้เล่น');
+                return;
+            }
+
+            const data = {
+                player: playerName,
+                command: command,
+                value: value,
+                timestamp: Math.floor(Date.now() / 1000)
+            };
+
+            // บันทึกข้อมูลสำหรับให้ Roblox มารับ
+            gameData[playerName] = data;
+            localStorage.setItem('robloxGameData', JSON.stringify(gameData));
+
+            addLog(`🎮 ส่งคำสั่ง "${command}" ไปยัง ${playerName} (Value: ${value})`);
+            
+            // จำลองการส่งไปยัง API
+            simulateAPICall(data);
+        }
+
+        // ส่งคำสั่งด่วน
+        function quickCommand(cmd) {
+            document.getElementById('command').value = cmd;
+            sendCommand();
+        }
+
+        // ส่งรางวัล
+        function sendRewards() {
+            const playerName = document.getElementById('playerName').value;
+            const coins = parseInt(document.getElementById('coins').value) || 0;
+            const level = parseInt(document.getElementById('level').value) || 1;
+            const items = document.getElementById('items').value.split(',').map(item => item.trim());
+
+            if (!playerName) {
+                alert('กรุณากรอกชื่อผู้เล่น');
+                return;
+            }
+
+            const data = {
+                player: playerName,
+                command: 'rewards',
+                coins: coins,
+                level: level,
+                items: items,
+                timestamp: Math.floor(Date.now() / 1000)
+            };
+
+            gameData[playerName] = data;
+            localStorage.setItem('robloxGameData', JSON.stringify(gameData));
+
+            addLog(`🎁 ส่งรางวัล ${coins} Coins, Level ${level} ไปยัง ${playerName}`);
+            simulateAPICall(data);
+        }
+
+        // ส่งข้อมูลกำหนดเอง
+        function sendCustomData() {
+            const playerName = document.getElementById('playerName').value;
+            const customDataText = document.getElementById('customData').value;
+
+            if (!playerName) {
+                alert('กรุณากรอกชื่อผู้เล่น');
+                return;
+            }
+
+            try {
+                const customData = JSON.parse(customDataText);
+                const data = {
+                    player: playerName,
+                    command: 'custom',
+                    customData: customData,
+                    timestamp: Math.floor(Date.now() / 1000)
+                };
+
+                gameData[playerName] = data;
+                localStorage.setItem('robloxGameData', JSON.stringify(gameData));
+
+                addLog(`⚙️ ส่งข้อมูลกำหนดเองไปยัง ${playerName}`);
+                simulateAPICall(data);
+            } catch (error) {
+                alert('JSON ไม่ถูกต้อง: ' + error.message);
+            }
+        }
+
+        // จำลองการส่งไปยัง API
+        function simulateAPICall(data) {
+            // ในการใช้งานจริง จะส่งไปยัง server
+            console.log('Sending to API:', data);
+            addLog(`📡 ส่งข้อมูลไปยัง API เรียบร้อย`);
+        }
+
+        // API สำหรับให้ Roblox มารับข้อมูล
+        function getDataForPlayer(playerName) {
+            return gameData[playerName] || null;
+        }
+
+        // จำลอง API endpoint
+        window.getDataForRoblox = function(playerName) {
+            const data = getDataForPlayer(playerName);
+            if (data) {
+                addLog(`📤 Roblox ได้รับข้อมูลของ ${playerName}`);
+                // ลบข้อมูลหลังจากส่งแล้ว
+                delete gameData[playerName];
+                localStorage.setItem('robloxGameData', JSON.stringify(gameData));
+            }
+            return data;
+        };
+
+        // โหลดข้อมูลเก่า
+        window.onload = function() {
+            const savedData = localStorage.getItem('robloxGameData');
+            if (savedData) {
+                gameData = JSON.parse(savedData);
+            }
+            
+            addLog('🚀 เว็บไซต์ควบคุมเกม Roblox พร้อมใช้งาน');
+        };
+
+        // จำลองการเชื่อมต่อผู้เล่น
+        setInterval(() => {
+            // ตรวจสอบการเชื่อมต่อผู้เล่น
+            const playerList = document.getElementById('playerList');
+            // ในการใช้งานจริง จะดึงจาก API
+        }, 5000);
+    </script>
+</body>
+</html>
